@@ -1,24 +1,26 @@
 package client
 
 import (
+	"os"
+	"fmt"
+	"net"
+	"sync"
+	"time"
+	"flag"
+	"errors"
+	"os/user"
+	"strings"
+	"io/ioutil"
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
-	"flag"
-	"fmt"
-	"golang.conradwood.net/cmdline"
-	pb "golang.conradwood.net/registrar/proto"
+	//
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
-	"io/ioutil"
-	"net"
-	"os"
-	"os/user"
-	"strings"
-	"sync"
-	"time"
+	//
+	"golang.conradwood.net/cmdline"
+	pb "github.com/GuruSystems/framework/logger/proto"
 )
 
 var (
