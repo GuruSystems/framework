@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	//
-	"golang.conradwood.net/cmdline"
+	"github.com/GuruSystems/framework/cmdline"
 	pb "github.com/GuruSystems/framework/logger/proto"
 )
 
