@@ -2,16 +2,18 @@ package server
 
 import (
 	"errors"
+	"time"
 	"fmt"
-	"golang.conradwood.net/auth"
-	apb "golang.conradwood.net/auth/proto"
-	"golang.conradwood.net/client"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
-	"time"
+	//
+	"github.com/GuruSystems/framework/auth"
+	apb "github.com/GuruSystems/framework/proto/auth"
+	"github.com/GuruSystems/framework/client"
+
 )
 
 var (

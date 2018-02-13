@@ -1,7 +1,7 @@
 package auth
 
 import (
-	pb "golang.conradwood.net/auth/proto"
+	pb "github.com/GuruSystems/framework/proto/auth"
 )
 
 type User struct {

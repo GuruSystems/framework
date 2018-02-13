@@ -13,12 +13,9 @@ import (
 	"errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"golang.conradwood.net/cmdline"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
-
-	pb "golang.conradwood.net/registrar/proto"
 	"google.golang.org/grpc/codes"
 	"net"
 	"net/http"
@@ -26,6 +23,9 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	//
+	"github.com/GuruSystems/framework/cmdline"
+	pb "github.com/GuruSystems/framework/proto/registrar"
 )
 
 var (
