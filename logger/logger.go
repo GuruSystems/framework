@@ -7,7 +7,7 @@ import (
 	"time"
 	"errors"
 	//
-	"github.com/ConradWood/picoservices/src/golang.conradwood.net/client"
+	"github.com/GuruSystems/framework/client"
 	pb "proto"
 )
 
