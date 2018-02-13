@@ -20,7 +20,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	//
 	"github.com/GuruSystems/framework/cmdline"
-	pb "github.com/GuruSystems/framework/logger/proto"
+	pb "github.com/GuruSystems/framework/proto/registrar"
 )
 
 var (
