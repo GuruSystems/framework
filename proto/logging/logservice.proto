@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package logservice;
 
-import "github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api/annotations.proto";
+import "src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api/annotations.proto";
 
 message LogAppDef {
    string Status=1;
