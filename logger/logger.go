@@ -8,8 +8,7 @@ import (
 	"errors"
 	//
 	"github.com/GuruSystems/framework/client"
-	"github.com/GuruSystems/framework/logger/proto"
-	pb "proto"
+	pb "github.com/GuruSystems/framework/logger/proto"
 )
 
 var (
