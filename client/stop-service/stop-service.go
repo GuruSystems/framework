@@ -1,13 +1,12 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"net/http"
-	//"golang.conradwood.net/client"
-	"crypto/tls"
 	"os"
+	"fmt"
+	"flag"
 	"strings"
+	"net/http"
+	"crypto/tls"
 )
 
 var (
