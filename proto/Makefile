@@ -5,6 +5,12 @@ PROTOCINC += -Isrc/github.com/googleapis/googleapis/third_party/
 PROTOCINC += -Isrc/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis
 
 .PHONY: proto
+all:
+	auth
+	keyvalue
+	logging
+	registrar
+	softcat-rfc
 auth:
 	@echo compiling auth/auth.proto
 	@protoc ${PROTOCINC} --go_out=plugins=grpc:auth auth/auth.proto
