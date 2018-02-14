@@ -1,0 +1,39 @@
+
+syntax = "proto3";
+
+package rfccreator;
+
+import "google/api/annotations.proto";
+/*
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";
+import "examples/sub/message.proto";
+import "examples/sub2/message.proto";
+import "google/protobuf/timestamp.proto";
+*/
+message OpenPortRequest {
+ string PortDef = 1;
+ string NicDef = 2;
+ string FromAddr = 3;
+ bool SendToSoftcat = 4;
+}
+
+message DeleteServerRequest {
+ string Target = 1;
+ bool SendToSoftcat = 2;
+}
+message FreeTextRequest {
+ string Target = 1;
+ bool SendToSoftcat = 2;
+ string Text = 3;
+}
+
+message CreateResponse {
+ string NewID=1;
+}
+
+service RFCManager {
+ rpc OpenPort(OpenPortRequest) returns (CreateResponse){ }
+ rpc DeleteServer(DeleteServerRequest) returns (CreateResponse){ }
+ rpc FreeText(FreeTextRequest) returns (CreateResponse){ }
+}
