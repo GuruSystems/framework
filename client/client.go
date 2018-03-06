@@ -60,76 +60,92 @@ func SaveToken(tk string) error {
 }
 
 // opens a tcp connection to a gurupath.
-func DialTCPWrapper(gurupath string) (net.Conn, error) {
-	reg := cmdline.GetRegistryAddress()
-	//fmt.Printf("Using registrar @%s\n", reg)
-	opts := getDialopts()
-	conn, err := grpc.Dial(reg, opts...)
+func DialTCPWrapper(serviceName string) (net.Conn, error) {
+
+	serverAddr, err := ServiceHost(serviceName, pb.Apitype_tcp)
+    if err != nil {
+        return nil, err
+    }
+
+	conn, err := net.Dial("tcp", serverAddr)
 	if err != nil {
-		printError(gurupath, fmt.Sprintf("Error dialling registry %s @ %s\n", gurupath, reg))
-		return nil, err
-	}
-	defer conn.Close()
-	rcl := pb.NewRegistryClient(conn)
-	gt := &pb.GetTargetRequest{Gurupath: gurupath, ApiType: pb.Apitype_tcp}
-	lr, err := rcl.GetTarget(context.Background(), gt)
-	if err != nil {
-		s := fmt.Sprintf("Error getting TCP target for gurupath %s: %s", gurupath, err)
-		printError(gurupath, s)
-		return nil, errors.New(s)
-	}
-	if len(lr.Service) == 0 {
-		s := fmt.Sprintf("No TCP target found for path %s", gurupath)
-		printError(gurupath, s)
-		return nil, errors.New(s)
-	}
-	svr := lr.Service[0]
-	svl := svr.Location
-	if len(svl.Address) == 0 {
-		s := fmt.Sprintf("No TCP location found for path %s", gurupath)
-		printError(gurupath, s)
-		return nil, errors.New(s)
-	}
-	adr := svl.Address[0]
-	tc, err := net.Dial("tcp", fmt.Sprintf("%s:%d", adr.Host, adr.Port))
-	return tc, err
+        return nil, err
+    }
+
+	return conn, err
+}
+
+func ServiceHost(serviceName string, apiType pb.Apitype) (string, error) {
+
+    list, err := ServiceList(serviceName, apiType)
+    if err != nil {
+        return "", err
+    }
+
+    if len(list) == 0 {
+        return "", fmt.Errorf("No grpc target found for name %s", serviceName)
+    }
+
+    if len(list[0].Location.Address) == 0 {
+        return "", fmt.Errorf("No grpc location found for name %s - is it running?", serviceName)
+    }
+
+    return fmt.Sprintf(
+        "%s:%d",
+        list[0].Location.Address[0].Host,
+        list[0].Location.Address[0].Port,
+    ), nil
+}
+
+func ServiceList(serviceName string, apiType pb.Apitype) ([]*pb.GetResponse, error) {
+
+	registryAddress := cmdline.GetRegistryAddress()
+
+    conn, err := grpc.Dial(
+        registryAddress,
+        getDialopts()...,
+    )
+    if err != nil {
+        return nil, fmt.Errorf("Error dialling servicename %s @ %s\n", serviceName, registryAddress)
+    }
+    defer conn.Close()
+
+    grpcRegistryClient := pb.NewRegistryClient(conn)
+    list, err := grpcRegistryClient.GetTarget(
+        context.Background(),
+        &pb.GetTargetRequest{
+            Name: serviceName,
+            ApiType: apiType,
+        },
+    )
+    if err != nil {
+        return nil, fmt.Errorf("Error getting grpc service address %s: %s\n", serviceName, err)
+    }
+
+    return list.Service, nil
 }
 
 // given a service name we look up its address in the registry
 // and return a connection to it.
 // it's a replacement for the normal "dial" but instead of an address
 // it takes a service name
-func DialWrapper(servicename string) (*grpc.ClientConn, error) {
-	reg := cmdline.GetRegistryAddress()
-	//fmt.Printf("Using registrar @%s to dial %s (grpc)\n", reg, servicename)
-	opts := getDialopts()
-	conn, err := grpc.Dial(reg, opts...)
+func DialWrapper(serviceName string) (*grpc.ClientConn, error) {
+
+    serverAddr, err := ServiceHost(serviceName, pb.Apitype_grpc)
+    if err != nil {
+        return nil, err
+    }
+
+    creds := GetClientCreds()
+	conn, err := grpc.Dial(
+        serverAddr,
+        grpc.WithTransportCredentials(creds),
+    )
 	if err != nil {
-		printError(servicename, fmt.Sprintf("Error dialling servicename %s @ %s\n", servicename, reg))
-		return nil, err
+		return nil, fmt.Errorf("Error dialling servicename @ %s\n", serverAddr)
 	}
-	defer conn.Close()
-	rcl := pb.NewRegistryClient(conn)
-	gt := &pb.GetTargetRequest{Name: servicename, ApiType: pb.Apitype_grpc}
-	lr, err := rcl.GetTarget(context.Background(), gt)
-	if err != nil {
-		printError(servicename, fmt.Sprintf("Error getting grpc service address %s: %s\n", servicename, err))
-		return nil, err
-	}
-	if len(lr.Service) == 0 {
-		s := fmt.Sprintf("No grpc target found for name %s", servicename)
-		printError(servicename, s)
-		return nil, errors.New(s)
-	}
-	svr := lr.Service[0]
-	svl := svr.Location
-	if len(svl.Address) == 0 {
-		s := fmt.Sprintf("No grpc location found for name %s - is it running?", servicename)
-		printError(servicename, s)
-		return nil, errors.New(s)
-	}
-	sa := svl.Address[0]
-	return DialService(sa)
+
+    return conn, nil
 }
 
 func hasApi(ar []pb.Apitype, lf pb.Apitype) bool {
@@ -139,26 +155,6 @@ func hasApi(ar []pb.Apitype, lf pb.Apitype) bool {
 		}
 	}
 	return false
-}
-
-// if one needs to, one can still connect explicitly to a service
-// this call DOES NOT CLOSE THE CONNECTION
-func DialService(sa *pb.ServiceAddress) (*grpc.ClientConn, error) {
-	serverAddr := fmt.Sprintf("%s:%d", sa.Host, sa.Port)
-	//fmt.Printf("Dialling service at \"%s\"\n", serverAddr)
-
-	creds := GetClientCreds()
-	cc, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(creds))
-
-	//	opts = []grpc.DialOption{grpc.WithInsecure()}
-	// cc, err := grpc.Dial(serverAddr, opts...)
-	if err != nil {
-		fmt.Printf("Error dialling servicename @ %s\n", serverAddr)
-		return nil, err
-	}
-	//defer cc.Close()
-
-	return cc, nil
 }
 
 // get the Client Credentials we use to connect to other RPCs
