@@ -1,25 +1,38 @@
 package balancer
 
 import (
+    "fmt"
+    "flag"
+    "strconv"
     "testing"
+    //
+	"github.com/GuruSystems/framework/client"
+    slackgateway "gitlab.gurusys.co.uk/guru/proto/slackgateway"
 )
 
 func TestNewServiceManager(t *testing.T) {
 
-    service, err := NewServiceManager("slackgateway.SlackGateway")
+    flag.Parse()
+
+    service, err := SlackGatewayClient()
     if err != nil {
         t.Error(err)
+        return
     }
 
-    req := &pb.PublishMessageRequest{
-        Channel: "bot",
-        Text: *flag_message + " @AlexB " + strconv.Itoa(x),
-    }
+    for x := 0; x < 10; x ++ {
 
-    resp, err := service.SlackGatewayClient().PublishMessage(client.SetAuthToken(), req)
-    if err != nil {
-        fmt.Println("FAILED TO PUBLISH", req, err)
-        continue
-    }
+        req := &slackgateway.PublishMessageRequest{
+            Channel: "bot",
+            Text: "framework/client/balancer "+strconv.Itoa(x),
+        }
 
+        _, err = service.PublishMessage(client.SetAuthToken(), req)
+        if err != nil {
+            fmt.Println("FAILED TO PUBLISH", req, err)
+            t.Error(err)
+            return
+        }
+
+    }
 }

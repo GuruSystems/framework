@@ -81,12 +81,11 @@ func HostList(serviceName string, apiType pb.Apitype) ([]*pb.GetResponse, error)
         grpc.WithTimeout(time.Duration(CONST_CALL_TIMEOUT) * time.Second),
     )
     if err != nil {
-        return nil, fmt.Errorf("Error dialling servicename %s @ %s\n", serviceName, registryAddress)
+        return nil, fmt.Errorf("HostList - Error dialling servicename %s @ %s\n", serviceName, registryAddress)
     }
     defer conn.Close()
 
-    grpcRegistryClient := pb.NewRegistryClient(conn)
-    list, err := grpcRegistryClient.GetTarget(
+    list, err := pb.NewRegistryClient(conn).GetTarget(
         context.Background(),
         &pb.GetTargetRequest{
             Name: serviceName,
@@ -94,8 +93,10 @@ func HostList(serviceName string, apiType pb.Apitype) ([]*pb.GetResponse, error)
         },
     )
     if err != nil {
-        return nil, fmt.Errorf("Error getting grpc service address %s: %s\n", serviceName, err)
+        return nil, fmt.Errorf("HostList - Error getting grpc service address %s: %s\n", serviceName, err)
     }
+
+    fmt.Println("REGISTRY", registryAddress, "LISTING", serviceName, ":", list.Service)
 
     return list.Service, nil
 }
