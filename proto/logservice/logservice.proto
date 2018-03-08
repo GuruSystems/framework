@@ -3,8 +3,6 @@ syntax = "proto3";
 
 package logservice;
 
-import "src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api/annotations.proto";
-
 message LogAppDef {
    string Status=1;
    string Appname=2;
