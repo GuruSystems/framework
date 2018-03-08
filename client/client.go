@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	//
-	"github.com/GuruSystems/framework/cmdline"
+	"github.com/GuruSystems/framework/client/registry"
 	pb "github.com/GuruSystems/framework/proto/registrar"
 )
 
@@ -62,7 +62,7 @@ func SaveToken(tk string) error {
 // opens a tcp connection to a gurupath.
 func DialTCPWrapper(serviceName string) (net.Conn, error) {
 
-	serverAddr, err := ServiceHost(serviceName, pb.Apitype_tcp)
+	serverAddr, err := registry.GetHost(serviceName, pb.Apitype_tcp)
     if err != nil {
         return nil, err
     }
@@ -75,63 +75,13 @@ func DialTCPWrapper(serviceName string) (net.Conn, error) {
 	return conn, err
 }
 
-func ServiceHost(serviceName string, apiType pb.Apitype) (string, error) {
-
-    list, err := ServiceList(serviceName, apiType)
-    if err != nil {
-        return "", err
-    }
-
-    if len(list) == 0 {
-        return "", fmt.Errorf("No grpc target found for name %s", serviceName)
-    }
-
-    if len(list[0].Location.Address) == 0 {
-        return "", fmt.Errorf("No grpc location found for name %s - is it running?", serviceName)
-    }
-
-    return fmt.Sprintf(
-        "%s:%d",
-        list[0].Location.Address[0].Host,
-        list[0].Location.Address[0].Port,
-    ), nil
-}
-
-func ServiceList(serviceName string, apiType pb.Apitype) ([]*pb.GetResponse, error) {
-
-	registryAddress := cmdline.GetRegistryAddress()
-
-    conn, err := grpc.Dial(
-        registryAddress,
-        getDialopts()...,
-    )
-    if err != nil {
-        return nil, fmt.Errorf("Error dialling servicename %s @ %s\n", serviceName, registryAddress)
-    }
-    defer conn.Close()
-
-    grpcRegistryClient := pb.NewRegistryClient(conn)
-    list, err := grpcRegistryClient.GetTarget(
-        context.Background(),
-        &pb.GetTargetRequest{
-            Name: serviceName,
-            ApiType: apiType,
-        },
-    )
-    if err != nil {
-        return nil, fmt.Errorf("Error getting grpc service address %s: %s\n", serviceName, err)
-    }
-
-    return list.Service, nil
-}
-
 // given a service name we look up its address in the registry
 // and return a connection to it.
 // it's a replacement for the normal "dial" but instead of an address
 // it takes a service name
 func DialWrapper(serviceName string) (*grpc.ClientConn, error) {
 
-    serverAddr, err := ServiceHost(serviceName, pb.Apitype_grpc)
+    serverAddr, err := registry.GetHost(serviceName, pb.Apitype_grpc)
     if err != nil {
         return nil, err
     }
