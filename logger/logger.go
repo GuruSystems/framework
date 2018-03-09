@@ -8,7 +8,8 @@ import (
 	"errors"
 	//
 	"github.com/GuruSystems/framework/client"
-	pb "github.com/GuruSystems/framework/proto/logging"
+	"gitlab.gurusys.co.uk/guru/proto/client"
+	"gitlab.gurusys.co.uk/guru/proto/logservice"
 )
 
 var (
@@ -22,7 +23,8 @@ type QueueEntry struct {
 }
 
 type AsyncLogQueue struct {
-	appDef         *pb.LogAppDef
+	grpcClient     logservice.LogServiceClient
+	appDef         *logservice.LogAppDef
 	entries        []*QueueEntry
 	lastErrPrinted time.Time
 	MaxSize        int
@@ -31,8 +33,14 @@ type AsyncLogQueue struct {
 
 func NewAsyncLogQueue(appname, repo, group, namespace, deplid string) (*AsyncLogQueue, error) {
 
+	grpcClient, err := protoclient.LogServiceClient()
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Logqueue flush error: %s", err))
+	}
+
 	alq := &AsyncLogQueue{
-		appDef: &pb.LogAppDef{
+		grpcClient: grpcClient,
+		appDef: &logservice.LogAppDef{
 			Appname: appname,
 			Repository: repo,
 			Groupname: group,
@@ -93,30 +101,21 @@ func (alq *AsyncLogQueue) Flush() error {
 		return nil
 	}
 
-	logRequest := &pb.LogRequest{
+	logRequest := &logservice.LogRequest{
 		AppDef: alq.appDef,
 	}
-
-	conn, err := client.DialWrapper("logservice.LogService")
-	if err != nil {
-		return errors.New(fmt.Sprintf("Logqueue flush error: %s", err))
-	}
-	defer conn.Close()
-
-	ctx := client.SetAuthToken()
-	pbClient := pb.NewLogServiceClient(conn)
 
 	for _, qe := range alq.entries {
 		logRequest.Lines = append(
 			logRequest.Lines,
-			&pb.LogLine{
+			&logservice.LogLine{
 				Time: qe.created,
 				Line: qe.line,
 			},
 		)
 	}
 
-	_, err = pbClient.LogCommandStdout(ctx, logRequest)
+	_, err := alq.grpcClient.LogCommandStdout(client.SetAuthToken(), logRequest)
 	if err != nil {
 		if time.Since(alq.lastErrPrinted) > (10 * time.Second) {
 			fmt.Printf("Failed to send log: %s\n", err)
