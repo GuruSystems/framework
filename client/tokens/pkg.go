@@ -17,7 +17,6 @@ import (
 
 var (
 	displayedTokenInfo = false
-	token = flag.String("token", "user_token", "The authentication token (cookie) to authenticate with. May be name of a file in ~/.picoservices/tokens/, if so file contents shall be used as cookie")
 )
 
 func SaveToken(tk string) error {
