@@ -7,7 +7,7 @@ import (
 	"time"
 	"errors"
 	//
-	"github.com/GuruSystems/framework/client"
+	"github.com/GuruSystems/framework/client/tokens"
 	"gitlab.gurusys.co.uk/guru/proto/client"
 	"gitlab.gurusys.co.uk/guru/proto/logservice"
 )
@@ -115,7 +115,7 @@ func (alq *AsyncLogQueue) Flush() error {
 		)
 	}
 
-	_, err := alq.grpcClient.LogCommandStdout(client.SetAuthToken(), logRequest)
+	_, err := alq.grpcClient.LogCommandStdout(tokens.SetAuthToken(), logRequest)
 	if err != nil {
 		if time.Since(alq.lastErrPrinted) > (10 * time.Second) {
 			fmt.Printf("Failed to send log: %s\n", err)

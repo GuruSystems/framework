@@ -1,9 +1,8 @@
-package client
+package tokens
 
 import (
 	"os"
 	"fmt"
-	"flag"
 	"time"
 	"errors"
 	"strings"
@@ -27,7 +26,7 @@ func SaveToken(tk string) error {
 		return err
 	}
 	cfgdir := fmt.Sprintf("%s/.picoservices/tokens", usr.HomeDir)
-	fname := fmt.Sprintf("%s/%s", cfgdir, *token)
+	fname := fmt.Sprintf("%s/%s", cfgdir, tk)
 	if _, err := os.Stat(fname); !os.IsNotExist(err) {
 		return errors.New(fmt.Sprintf("File %s exists already", fname))
 	}
