@@ -18,6 +18,16 @@ var (
 	displayedTokenInfo = false
 )
 
+func SetAuthToken(token string) context.Context {
+	tok := GetToken(token)
+	md := metadata.Pairs(
+		"token", tok,
+		"clid", "itsme",
+	)
+	ctx, _ := context.WithTimeout(context.Background(), time.Duration(5000) * time.Millisecond)
+	return metadata.NewOutgoingContext(ctx, md)
+}
+
 func SaveToken(tk string) error {
 
 	usr, err := user.Current()
@@ -61,15 +71,4 @@ func GetToken(token string) string {
 	tok = strings.TrimSpace(tok)
 
 	return tok
-}
-
-func SetAuthToken(token string) context.Context {
-	tok := GetToken(token)
-	md := metadata.Pairs("token", tok,
-		"clid", "itsme",
-	)
-	millis := 5000
-	ctx, _ := context.WithTimeout(context.Background(), time.Duration(millis)*time.Millisecond)
-	ctx = metadata.NewOutgoingContext(ctx, md)
-	return ctx
 }

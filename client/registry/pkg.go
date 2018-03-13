@@ -96,7 +96,5 @@ func HostList(serviceName string, apiType pb.Apitype) ([]*pb.GetResponse, error)
         return nil, fmt.Errorf("HostList - Error getting grpc service address %s: %s\n", serviceName, err)
     }
 
-    fmt.Println("REGISTRY", registryAddress, "LISTING", serviceName, ":", list.Service)
-
     return list.Service, nil
 }
