@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	//
+	"github.com/GuruSystems/framework/client/certificates"
 	"github.com/GuruSystems/framework/client/registry"
 	pb "github.com/GuruSystems/framework/proto/registrar"
 )
@@ -80,15 +81,20 @@ func hasApi(ar []pb.Apitype, lf pb.Apitype) bool {
 // get the Client Credentials we use to connect to other RPCs
 func GetClientCreds() credentials.TransportCredentials {
 	roots := x509.NewCertPool()
-	FrontendCert := Certificate //ioutil.ReadFile(*clientcrt)
-	roots.AppendCertsFromPEM(FrontendCert)
-	ImCert := Ca //ioutil.ReadFile(*clientca)
+
+	frontendCert := certificates.Certificate()
+
+	roots.AppendCertsFromPEM(frontendCert)
+	ImCert := certificates.Ca() //ioutil.ReadFile(*clientca)
 	roots.AppendCertsFromPEM(ImCert)
-	cert, err := tls.X509KeyPair(Certificate, Privatekey)
+
+	pk := certificates.Privatekey()
+
+	cert, err := tls.X509KeyPair(frontendCert, pk)
 	//	cert, err := tls.LoadX509KeyPair(*clientcrt, *clientkey)
 	if err != nil {
 		fmt.Printf("Failed to create client certificates: %s\n", err)
-		fmt.Printf("key:\n%s\n", string(Privatekey))
+		fmt.Printf("key:\n%s\n", string(pk))
 		return nil
 	}
 	// we don't verify the hostname because we use a dynamic registry thingie
