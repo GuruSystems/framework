@@ -7,8 +7,8 @@ import (
     "golang.org/x/net/context"
     "google.golang.org/grpc"
     //
-	"github.com/GuruSystems/framework/cmdline"
-	pb "github.com/GuruSystems/framework/proto/registrar"
+	"github.com/GuruSystems/go-framework/cmdline"
+	pb "github.com/GuruSystems/go-framework/proto/registrar"
 )
 
 const (
