@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"time"
+	"flag"
 	"errors"
 	"strings"
 	"os/user"
@@ -16,10 +17,11 @@ import (
 
 var (
 	displayedTokenInfo = false
+	flag_token = flag.String("token", "user_token", "The authentication token (cookie) to authenticate with. May be name of a file in ~/.picoservices/tokens/, if so file contents shall be used as cookie")
 )
 
-func SetAuthToken(token string) context.Context {
-	tok := GetToken(token)
+func ContextWithToken() context.Context {
+	tok := GetToken(*flag_token)
 	md := metadata.Pairs(
 		"token", tok,
 		"clid", "itsme",
