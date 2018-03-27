@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	//
-	"github.com/GuruSystems/go-framework/client/certificates"
+	"github.com/GuruSystems/go-framework/certificates"
 	"github.com/GuruSystems/go-framework/client/registry"
 	pb "github.com/GuruSystems/go-framework/proto/registrar"
 )

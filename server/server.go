@@ -1,31 +1,32 @@
 package server
 
 import (
-	"flag"
+	"os"
+	"net"
 	"fmt"
+	"flag"
+	"time"
+	"errors"
+	"strings"
+	"syscall"
+	"net/http"
+	"os/signal"
+	"crypto/tls"
+	"crypto/x509"
+	//
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	"time"
-	//	"github.com/golang/protobuf/proto"
-	"crypto/tls"
-	"crypto/x509"
-	"errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/codes"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
 	//
-	"github.com/GuruSystems/framework/cmdline"
-	pb "github.com/GuruSystems/framework/proto/registrar"
+	"github.com/GuruSystems/go-framework/cmdline"
+	pb "github.com/GuruSystems/go-framework/proto/registrar"
+	"github.com/GuruSystems/go-framework/certificates"
 )
 
 var (
@@ -216,15 +217,15 @@ func ServerStartup(def *serverDef) error {
 	listenAddr := fmt.Sprintf(":%d", def.Port)
 	fmt.Println("Starting server on ", listenAddr)
 
-	BackendCert := Certificate
-	BackendKey := Privatekey
-	ImCert := Ca
+	BackendCert := certificates.Certificate()
+	BackendKey := certificates.Privatekey()
+	ImCert := certificates.Ca()
 	cert, err := tls.X509KeyPair(BackendCert, BackendKey)
 	if err != nil {
 		return fmt.Errorf("failed to parse certificate: %v\n", err)
 	}
 	roots := x509.NewCertPool()
-	FrontendCert := Certificate
+	FrontendCert := certificates.Certificate()
 	roots.AppendCertsFromPEM(FrontendCert)
 	roots.AppendCertsFromPEM(ImCert)
 
@@ -349,8 +350,8 @@ func startHttpServe(sd *serverDef, grpcServer *grpc.Server) error {
 		panic(err)
 	}
 
-	BackendCert := Certificate
-	BackendKey := Privatekey
+	BackendCert := certificates.Certificate()
+	BackendKey := certificates.Privatekey()
 	cert, err := tls.X509KeyPair(BackendCert, BackendKey)
 
 	srv := &http.Server{
