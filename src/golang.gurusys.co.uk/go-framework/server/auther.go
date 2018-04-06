@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	//
-	"github.com/GuruSystems/go-framework/auth"
-	apb "github.com/GuruSystems/go-framework/proto/auth"
-	"github.com/GuruSystems/go-framework/client"
+	"golang.gurusys.co.uk/go-framework/auth"
+	apb "golang.gurusys.co.uk/go-framework/proto/auth"
+	"golang.gurusys.co.uk/go-framework/client"
 )
 
 var (

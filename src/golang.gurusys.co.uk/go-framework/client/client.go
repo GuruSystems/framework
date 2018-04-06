@@ -1,25 +1,21 @@
 package client
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"golang.gurusys.co.uk/go-framework/certificates"
+	"golang.gurusys.co.uk/go-framework/client/registry"
+	pb "golang.gurusys.co.uk/go-framework/proto/registrar"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"net"
 	"sync"
 	"time"
-	"flag"
-	"crypto/tls"
-	"crypto/x509"
-	//
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	//
-	"github.com/GuruSystems/go-framework/certificates"
-	"github.com/GuruSystems/go-framework/client/registry"
-	pb "github.com/GuruSystems/go-framework/proto/registrar"
 )
 
 var (
-	cert = []byte{1, 2, 3}
-	token = flag.String("token", "user_token", "The authentication token (cookie) to authenticate with. May be name of a file in ~/.picoservices/tokens/, if so file contents shall be used as cookie")
+	cert      = []byte{1, 2, 3}
 	errorList []*errorCache
 	errorLock sync.Mutex
 )
@@ -34,14 +30,14 @@ type errorCache struct {
 func DialTCPWrapper(serviceName string) (net.Conn, error) {
 
 	serverAddr, err := registry.GetHost(serviceName, pb.Apitype_tcp)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	conn, err := net.Dial("tcp", serverAddr)
 	if err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 
 	return conn, err
 }
@@ -52,21 +48,21 @@ func DialTCPWrapper(serviceName string) (net.Conn, error) {
 // it takes a service name
 func DialWrapper(serviceName string) (*grpc.ClientConn, error) {
 
-    serverAddr, err := registry.GetHost(serviceName, pb.Apitype_grpc)
-    if err != nil {
-        return nil, err
-    }
+	serverAddr, err := registry.GetHost(serviceName, pb.Apitype_grpc)
+	if err != nil {
+		return nil, err
+	}
 
-    creds := GetClientCreds()
+	creds := GetClientCreds()
 	conn, err := grpc.Dial(
-        serverAddr,
-        grpc.WithTransportCredentials(creds),
-    )
+		serverAddr,
+		grpc.WithTransportCredentials(creds),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("Error dialling servicename @ %s\n", serverAddr)
 	}
 
-    return conn, nil
+	return conn, nil
 }
 
 func hasApi(ar []pb.Apitype, lf pb.Apitype) bool {

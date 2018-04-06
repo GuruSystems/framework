@@ -8,8 +8,8 @@ import (
 	"errors"
 	//
 	"github.com/GuruSystems/framework/client/tokens"
-	"gitlab.gurusys.co.uk/guru/proto/client"
-	"gitlab.gurusys.co.uk/guru/proto/logservice"
+	"golang.gurusys.co.uk/guru/proto/client"
+	"golang.gurusys.co.uk/guru/proto/logservice"
 )
 
 var (

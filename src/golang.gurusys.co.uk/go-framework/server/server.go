@@ -24,9 +24,9 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/codes"
 	//
-	"github.com/GuruSystems/go-framework/cmdline"
-	pb "github.com/GuruSystems/go-framework/proto/registrar"
-	"github.com/GuruSystems/go-framework/certificates"
+	"golang.gurusys.co.uk/go-framework/cmdline"
+	pb "golang.gurusys.co.uk/go-framework/proto/registrar"
+	"golang.gurusys.co.uk/go-framework/certificates"
 )
 
 var (
