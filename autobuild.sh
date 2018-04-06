@@ -14,7 +14,7 @@ fi
 
 # this is only a library. for now, we simply tar it up
 rm -rf dist ; mkdir dist || exit 10
-tar -jcvf dist/go-framework.tar.bz2 -C src golang.gurusys.co.uk || exit 10
+tar -jcvf dist/go-framework.tar.bz2 -C src/golang.gurusys.co.uk go-framework || exit 10
 
 
 # we are on a build server, so submit it:
