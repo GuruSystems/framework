@@ -2,17 +2,17 @@ package server
 
 import (
 	"errors"
-	"time"
 	"fmt"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
+	"time"
 	//
 	"golang.gurusys.co.uk/go-framework/auth"
-	apb "golang.gurusys.co.uk/go-framework/proto/auth"
 	"golang.gurusys.co.uk/go-framework/client"
+	apb "golang.gurusys.co.uk/go-framework/proto/auth"
 )
 
 var (

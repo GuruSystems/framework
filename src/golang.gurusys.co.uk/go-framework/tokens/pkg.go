@@ -1,14 +1,14 @@
 package tokens
 
 import (
-	"os"
-	"fmt"
-	"time"
-	"flag"
 	"errors"
-	"strings"
-	"os/user"
+	"flag"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"os/user"
+	"strings"
+	"time"
 	//
 	"google.golang.org/grpc/metadata"
 	//
@@ -17,7 +17,7 @@ import (
 
 var (
 	displayedTokenInfo = false
-	flag_token = flag.String("token", "user_token", "The authentication token (cookie) to authenticate with. May be name of a file in ~/.picoservices/tokens/, if so file contents shall be used as cookie")
+	flag_token         = flag.String("token", "user_token", "The authentication token (cookie) to authenticate with. May be name of a file in ~/.picoservices/tokens/, if so file contents shall be used as cookie")
 )
 
 func ContextWithToken() context.Context {
@@ -26,7 +26,7 @@ func ContextWithToken() context.Context {
 		"token", tok,
 		"clid", "itsme",
 	)
-	ctx, _ := context.WithTimeout(context.Background(), time.Duration(5000) * time.Millisecond)
+	ctx, _ := context.WithTimeout(context.Background(), time.Duration(5000)*time.Millisecond)
 	return metadata.NewOutgoingContext(ctx, md)
 }
 

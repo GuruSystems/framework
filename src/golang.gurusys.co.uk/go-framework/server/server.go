@@ -1,32 +1,32 @@
 package server
 
 import (
-	"os"
-	"net"
-	"fmt"
-	"flag"
-	"time"
-	"errors"
-	"strings"
-	"syscall"
-	"net/http"
-	"os/signal"
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
+	"flag"
+	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
 	//
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/reflection"
 	//
+	"golang.gurusys.co.uk/go-framework/certificates"
 	"golang.gurusys.co.uk/go-framework/cmdline"
 	pb "golang.gurusys.co.uk/go-framework/proto/registrar"
-	"golang.gurusys.co.uk/go-framework/certificates"
 )
 
 var (
