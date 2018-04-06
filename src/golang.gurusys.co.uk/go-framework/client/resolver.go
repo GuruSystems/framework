@@ -2,9 +2,9 @@ package client
 
 import (
 	"fmt"
-	"golang.gurusys.co.uk/go-framework/client/registry"
+	pb "golang.gurusys.co.uk/apis/registry"
 	"golang.gurusys.co.uk/go-framework/cmdline"
-	pb "golang.gurusys.co.uk/go-framework/proto/registrar"
+	"golang.gurusys.co.uk/go-framework/registry"
 	"google.golang.org/grpc/naming"
 )
 

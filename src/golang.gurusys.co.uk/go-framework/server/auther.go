@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/peer"
 	"time"
 	//
+	apb "golang.gurusys.co.uk/apis/auth"
 	"golang.gurusys.co.uk/go-framework/auth"
 	"golang.gurusys.co.uk/go-framework/client"
-	apb "golang.gurusys.co.uk/go-framework/proto/auth"
 )
 
 var (

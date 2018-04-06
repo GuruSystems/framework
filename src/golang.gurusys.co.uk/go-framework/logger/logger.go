@@ -1,13 +1,13 @@
 package logger
 
 import (
-	"errors"
-	"flag"
 	"fmt"
+	"flag"
 	"sync"
 	"time"
+	"errors"
 	//
-	"github.com/GuruSystems/framework/client/tokens"
+	"golang.gurusys.co.uk/go-framework/client/tokens"
 	"golang.gurusys.co.uk/guru/proto/client"
 	"golang.gurusys.co.uk/guru/proto/logservice"
 )
@@ -41,10 +41,10 @@ func NewAsyncLogQueue(appname, repo, group, namespace, deplid string) (*AsyncLog
 	alq := &AsyncLogQueue{
 		grpcClient: grpcClient,
 		appDef: &logservice.LogAppDef{
-			Appname:      appname,
-			Repository:   repo,
-			Groupname:    group,
-			Namespace:    namespace,
+			Appname: appname,
+			Repository: repo,
+			Groupname: group,
+			Namespace: namespace,
 			DeploymentID: deplid,
 		},
 		MaxSize: 5000,
@@ -70,7 +70,7 @@ func (alq *AsyncLogQueue) LogCommandStdout(line string, status string) error {
 	defer alq.Unlock()
 
 	qe := QueueEntry{
-		sent:    false,
+		sent: false,
 		created: time.Now().Unix(),
 		line:    line,
 	}

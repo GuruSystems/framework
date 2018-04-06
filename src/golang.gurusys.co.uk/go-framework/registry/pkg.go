@@ -2,13 +2,11 @@ package registry
 
 import (
 	"fmt"
-	"time"
-	//
+	pb "golang.gurusys.co.uk/apis/registry"
+	"golang.gurusys.co.uk/go-framework/cmdline"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	//
-	"golang.gurusys.co.uk/go-framework/cmdline"
-	pb "golang.gurusys.co.uk/go-framework/proto/registrar"
+	"time"
 )
 
 const (

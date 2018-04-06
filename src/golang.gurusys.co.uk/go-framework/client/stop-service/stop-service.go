@@ -1,12 +1,12 @@
 package main
 
 import (
-	"crypto/tls"
-	"flag"
-	"fmt"
-	"net/http"
 	"os"
+	"fmt"
+	"flag"
 	"strings"
+	"net/http"
+	"crypto/tls"
 )
 
 var (
