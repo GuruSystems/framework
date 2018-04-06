@@ -1,26 +1,26 @@
 package logger
 
 import (
-    "flag"
-    "time"
-    "testing"
+	"flag"
+	"testing"
+	"time"
 )
 
 func TestSendLog(t *testing.T) {
 
-    flag.Parse()
+	flag.Parse()
 
-    q, err := NewAsyncLogQueue("buildrepo", "?", "?", "?", "?")
-    if err != nil {
-        t.Error(err)
-        return
-    }
+	q, err := NewAsyncLogQueue("buildrepo", "?", "?", "?", "?")
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-    err = q.LogCommandStdout("this is a test searchforme", "")
-    if err != nil {
-        t.Error(err)
-        return
-    }
+	err = q.LogCommandStdout("this is a test searchforme", "")
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-    time.Sleep(3 *time.Second)
+	time.Sleep(3 * time.Second)
 }
