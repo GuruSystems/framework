@@ -14,6 +14,7 @@ import (
 	"golang.gurusys.co.uk/apis/logservice"
 	"golang.gurusys.co.uk/apis/paypointendpoint"
 	"golang.gurusys.co.uk/apis/rfccreator"
+	"golang.gurusys.co.uk/apis/sensorapi"
 	"golang.gurusys.co.uk/apis/slackgateway"
 	"golang.gurusys.co.uk/apis/vpnmanager"
 	"google.golang.org/grpc"
@@ -270,4 +271,21 @@ func (dialer *Dialer) EchoServiceClient() (echoservice.EchoServiceClient, error)
 	}
 
 	return echoservice.NewEchoServiceClient(dialer.conn), nil
+}
+
+func (dialer *Dialer) SensorAPIClient() (sensorapi.SensorStoreServiceClient, error) {
+
+	err := dialer.DialService("sensorapi.SensorStoreService")
+	if err != nil {
+		return nil, err
+	}
+
+	dialer.RLock()
+	defer dialer.RUnlock()
+
+	if dialer.conn == nil {
+		return nil, fmt.Errorf("DIALER CONNECTION IS NIL")
+	}
+
+	return sensorapi.NewSensorStoreServiceClient(dialer.conn), nil
 }
