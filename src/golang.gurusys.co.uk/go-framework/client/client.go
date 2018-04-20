@@ -3,6 +3,7 @@ package client
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	pb "golang.gurusys.co.uk/apis/registry"
 	"golang.gurusys.co.uk/go-framework/certificates"
@@ -10,6 +11,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"net"
+	"runtime/debug"
+	"strings"
 	"sync"
 	"time"
 )
@@ -28,7 +31,11 @@ type errorCache struct {
 
 // opens a tcp connection to a gurupath.
 func DialTCPWrapper(serviceName string) (net.Conn, error) {
-
+	if strings.Contains(serviceName, "/") {
+		s := fmt.Sprintf("Error: The parameter for DialTCPWrapper needs a servicename. not a gurupath. You passed in %s, which looks very much like a gurupath. The \"old-style\" picoservices required a gurupath at this function, but go-framework does not. Did you recently upgrade and did not upgrade a config?\n", serviceName)
+		debug.PrintStack()
+		return nil, errors.New(s)
+	}
 	serverAddr, err := registry.GetHost(serviceName, pb.Apitype_tcp)
 	if err != nil {
 		return nil, err
