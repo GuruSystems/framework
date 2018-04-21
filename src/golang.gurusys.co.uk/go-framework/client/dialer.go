@@ -1,9 +1,14 @@
 package client
 
 import (
+	"flag"
 	"fmt"
 	"google.golang.org/grpc"
 	"sync"
+)
+
+var (
+	dialer_debug = flag.Bool("dialer_debug", false, "set to true to debug the grpc dialer")
 )
 
 type Dialer struct {
@@ -16,9 +21,9 @@ func (dialer *Dialer) DialService(serviceName string) error {
 
 	dialer.Lock()
 	defer dialer.Unlock()
-
-	fmt.Println("protoclient.DialService: Dialling " + serviceName + " and blocking until successful connection...")
-
+	if *dialer_debug {
+		fmt.Println("protoclient.DialService: Dialling " + serviceName + " and blocking until successful connection...")
+	}
 	if dialer.conn == nil {
 
 		conn, err := grpc.Dial(
@@ -36,8 +41,9 @@ func (dialer *Dialer) DialService(serviceName string) error {
 		}
 
 		dialer.conn = conn
-
-		fmt.Println("protoclient.DialService: Connected to address(es)...")
+		if *dialer_debug {
+			fmt.Println("protoclient.DialService: Connected to address(es)...")
+		}
 
 	}
 

@@ -6,21 +6,37 @@ import (
 	"golang.gurusys.co.uk/go-framework/cmdline"
 	"golang.gurusys.co.uk/go-framework/registry"
 	"google.golang.org/grpc/naming"
+	"math/rand"
+	"time"
+)
+
+var (
+	randomer = rand.New(rand.NewSource(time.Now().Unix()))
 )
 
 type RegistryResolver struct{}
 
 func (r *RegistryResolver) Resolve(serviceName string) (naming.Watcher, error) {
-
-	fmt.Printf("Resolving service address \"%s\" via registry %s...\n", serviceName, cmdline.GetRegistryAddress())
-
-	serverAddresses, err := registry.GetHosts(serviceName, pb.Apitype_grpc)
-	if err != nil {
-		return nil, err
+	if *dialer_debug {
+		fmt.Printf("Resolving service address \"%s\" via registry %s...\n", serviceName, cmdline.GetRegistryAddress())
 	}
+	var err error
+	var serverAddresses []string
+	for {
+		// if we find 0 addresses (or have an error), e.g. registry is unavailable
+		// we got to sleep and try again every 5 seconds(ish)
+		serverAddresses, err = registry.GetHosts(serviceName, pb.Apitype_grpc)
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Second * time.Duration(randomer.Intn(10)))
 
-	fmt.Printf("Instances of %s: %s\n", serviceName, serverAddresses)
+		fmt.Printf("error retrieving hosts for %s: %s\n", serviceName, err)
 
+	}
+	if *dialer_debug {
+		fmt.Printf("Instances of %s: %s\n", serviceName, serverAddresses)
+	}
 	var ups []*naming.Update
 	for _, a := range serverAddresses {
 		ups = append(
