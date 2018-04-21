@@ -9,6 +9,7 @@ import (
 	"golang.gurusys.co.uk/apis/deploymonkey"
 	"golang.gurusys.co.uk/apis/echoservice"
 	"golang.gurusys.co.uk/apis/httpkpi"
+	"golang.gurusys.co.uk/apis/hubextractor"
 	"golang.gurusys.co.uk/apis/kpitracker"
 	"golang.gurusys.co.uk/apis/lbproxy"
 	"golang.gurusys.co.uk/apis/logservice"
@@ -288,4 +289,22 @@ func (dialer *Dialer) SensorAPIClient() (sensorapi.SensorStoreServiceClient, err
 	}
 
 	return sensorapi.NewSensorStoreServiceClient(dialer.conn), nil
+}
+
+// Initialises a client
+func (dialer *Dialer) HubExtractorClient() (hubextractor.HubExtractorClient, error) {
+
+	err := dialer.DialService("hubextractor.HubExtractor")
+	if err != nil {
+		return nil, err
+	}
+
+	dialer.RLock()
+	defer dialer.RUnlock()
+
+	if dialer.conn == nil {
+		return nil, fmt.Errorf("DIALER CONNECTION IS NIL")
+	}
+
+	return hubextractor.NewHubExtractorClient(dialer.conn), nil
 }
