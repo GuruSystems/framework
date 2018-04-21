@@ -42,7 +42,7 @@ func (dialer *Dialer) DialService(serviceName string) error {
 
 		dialer.conn = conn
 		if *dialer_debug {
-			fmt.Println("protoclient.DialService: Connected to address(es)...")
+			fmt.Printf("Connected to %s\n", serviceName)
 		}
 
 	}

@@ -37,6 +37,13 @@ func (r *RegistryResolver) Resolve(serviceName string) (naming.Watcher, error) {
 	if *dialer_debug {
 		fmt.Printf("Instances of %s: %s\n", serviceName, serverAddresses)
 	}
+	// we randomize the server addresses we got initially.
+	// otherwise we always end up hitting the same thing
+
+	for i := len(serverAddresses) - 1; i > 0; i-- {
+		j := randomer.Intn(i + 1)
+		serverAddresses[i], serverAddresses[j] = serverAddresses[j], serverAddresses[i]
+	}
 	var ups []*naming.Update
 	for _, a := range serverAddresses {
 		ups = append(
