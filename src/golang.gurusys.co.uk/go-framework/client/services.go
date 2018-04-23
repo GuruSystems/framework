@@ -1,3 +1,4 @@
+
 package client
 
 import (
@@ -307,4 +308,22 @@ func (dialer *Dialer) HubExtractorClient() (hubextractor.HubExtractorClient, err
 	}
 
 	return hubextractor.NewHubExtractorClient(dialer.conn), nil
+}
+
+// Initialises a client
+func (dialer *Dialer) TestServiceClient() (testservice.TestServiceClient, error) {
+
+	err := dialer.DialService("testservice.TestServiceClient")
+	if err != nil {
+		return nil, err
+	}
+
+	dialer.RLock()
+	defer dialer.RUnlock()
+
+	if dialer.conn == nil {
+		return nil, fmt.Errorf("DIALER CONNECTION IS NIL")
+	}
+
+	return testservice.NewTestServiceClient(dialer.conn), nil
 }
