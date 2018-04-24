@@ -78,11 +78,11 @@ func authenticateToken(ctx context.Context, token string) (context.Context, erro
 
 		fmt.Printf("Due to failure (%s) verifying token we re-connect...\n", err)
 		authconn, err = client.DialWrapper("auth.AuthenticationService")
-		defer authconn.Close()
 		if err != nil {
 			fmt.Printf("Resetting the connection to auth service did not help either:%s\n", err)
 			return nil, err
 		}
+		defer authconn.Close()
 		authc = apb.NewAuthenticationServiceClient(authconn)
 
 		repeat--
