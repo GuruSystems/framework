@@ -1,4 +1,3 @@
-
 package client
 
 import (
@@ -18,6 +17,7 @@ import (
 	"golang.gurusys.co.uk/apis/rfccreator"
 	"golang.gurusys.co.uk/apis/sensorapi"
 	"golang.gurusys.co.uk/apis/slackgateway"
+	"golang.gurusys.co.uk/apis/testservice"
 	"golang.gurusys.co.uk/apis/vpnmanager"
 	"google.golang.org/grpc"
 )
