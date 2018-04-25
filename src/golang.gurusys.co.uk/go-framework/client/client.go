@@ -127,7 +127,7 @@ func getErrorCacheByName(name string) *errorCache {
 }
 
 func getDialopts() []grpc.DialOption {
-	deadline := 2
+	deadline := 10
 	opts := []grpc.DialOption{grpc.WithInsecure(), grpc.WithTimeout(time.Duration(deadline) * time.Second)}
 	return opts
 }

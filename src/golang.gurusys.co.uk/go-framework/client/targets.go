@@ -91,7 +91,6 @@ func queryForActiveInstances(serviceName string) []string {
 // this thing runs in the background, one per servicename
 func (tn *targetNotifier) requery() {
 	for {
-		time.Sleep(time.Duration(randomer.Intn(30)) * time.Second)
 		serverAddresses := queryForActiveInstances(tn.serviceName)
 		var ups []*naming.Update
 		for _, a := range serverAddresses {
@@ -112,6 +111,7 @@ func (tn *targetNotifier) requery() {
 			sendDiff(serverAddresses, watcher)
 			//			watcher.updates <- ups
 		}
+		time.Sleep(time.Duration(randomer.Intn(30)) * time.Second)
 	}
 }
 
