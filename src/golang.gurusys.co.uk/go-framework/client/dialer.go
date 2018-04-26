@@ -3,8 +3,9 @@ package client
 import (
 	"flag"
 	"fmt"
-	"google.golang.org/grpc"
 	"sync"
+
+	"google.golang.org/grpc"
 )
 
 var (
@@ -48,4 +49,8 @@ func (dialer *Dialer) DialService(serviceName string) error {
 	}
 
 	return nil
+}
+
+func (dialer *Dialer) GetConn() *grpc.ClientConn {
+	return dialer.conn
 }

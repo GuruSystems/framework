@@ -1,8 +1,20 @@
-
 package client
+
+/*
+DEPRECATED : this file is an unecessary dependancy as the framework does not need to know about clients
+dialer now exposes the connection, allowing clients to make the connection themselves:
+
+dialer := client.NewDialer()
+err := dialer.DialService("testservice.TestService")
+utils.Bail("Connection to the TestService failed: %s\n", err)
+dialer.RLock()
+defer dialer.RUnlock()
+tsc := ts.NewTestServiceClient(dialer.GetConn())
+*/
 
 import (
 	"fmt"
+
 	"golang.gurusys.co.uk/apis/auth"
 	"golang.gurusys.co.uk/apis/autodeployer"
 	"golang.gurusys.co.uk/apis/buildrepo"
@@ -308,22 +320,4 @@ func (dialer *Dialer) HubExtractorClient() (hubextractor.HubExtractorClient, err
 	}
 
 	return hubextractor.NewHubExtractorClient(dialer.conn), nil
-}
-
-// Initialises a client
-func (dialer *Dialer) TestServiceClient() (testservice.TestServiceClient, error) {
-
-	err := dialer.DialService("testservice.TestServiceClient")
-	if err != nil {
-		return nil, err
-	}
-
-	dialer.RLock()
-	defer dialer.RUnlock()
-
-	if dialer.conn == nil {
-		return nil, fmt.Errorf("DIALER CONNECTION IS NIL")
-	}
-
-	return testservice.NewTestServiceClient(dialer.conn), nil
 }
