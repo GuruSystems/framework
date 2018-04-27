@@ -302,7 +302,7 @@ func (dialer *Dialer) SensorAPIClient() (sensorapi.SensorStoreClient, error) {
 		return nil, fmt.Errorf("DIALER CONNECTION IS NIL")
 	}
 
-	return sensorapi.NewSensorStoreServiceClient(dialer.conn), nil
+	return sensorapi.NewSensorStoreClient(dialer.conn), nil
 }
 
 // Initialises a client
