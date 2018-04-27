@@ -288,9 +288,9 @@ func (dialer *Dialer) EchoServiceClient() (echoservice.EchoServiceClient, error)
 	return echoservice.NewEchoServiceClient(dialer.conn), nil
 }
 
-func (dialer *Dialer) SensorAPIClient() (sensorapi.SensorStoreServiceClient, error) {
+func (dialer *Dialer) SensorAPIClient() (sensorapi.SensorStoreClient, error) {
 
-	err := dialer.DialService("sensorapi.SensorStoreService")
+	err := dialer.DialService("sensorapi.SensorStore")
 	if err != nil {
 		return nil, err
 	}
