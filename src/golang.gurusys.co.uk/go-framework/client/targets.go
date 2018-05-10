@@ -51,7 +51,6 @@ func GetOrCreateNotifier(service string) *targetNotifier {
 	}
 	tn := &targetNotifier{serviceName: service}
 	targetNotifiers = append(targetNotifiers, tn)
-	go tn.requery()
 	return tn
 }
 
@@ -61,6 +60,7 @@ func notifyTargetChanges(ch *targetWatcher) error {
 	}
 	tn := GetOrCreateNotifier(ch.serviceName)
 	tn.AddWatcher(ch)
+	go tn.requery()
 	return nil
 }
 
@@ -91,6 +91,7 @@ func queryForActiveInstances(serviceName string) []string {
 // this thing runs in the background, one per servicename
 func (tn *targetNotifier) requery() {
 	for {
+		tn.lock.Lock()
 		serverAddresses := queryForActiveInstances(tn.serviceName)
 		var ups []*naming.Update
 		for _, a := range serverAddresses {
@@ -99,7 +100,6 @@ func (tn *targetNotifier) requery() {
 				&naming.Update{naming.Add, a, ""},
 			)
 		}
-		tn.lock.Lock()
 		curWatchers := make([]*targetWatcher, len(tn.watchers))
 		i := 0
 		for _, w := range tn.watchers {
